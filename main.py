@@ -2,36 +2,40 @@ import shutil
 import glob
 import os
 
-cwd = os.getcwd()
-print("Curent cwd: ", cwd)
-
-if os.path.isdir('mods'):
-    mods_path = os.path.abspath('mods')
-    mods = glob.glob(f'{mods_path}/*.jar')
-    print(mods)
-    print("Folder for mods: ", mods_path)
-    app_data_path = os.environ['APPDATA']
-    try:
-        minecraft_path = str(glob.glob(f"{app_data_path}/.minecraft"))
-        print("Minecraft_path = ", minecraft_path)
-    except:
-        print("Unknown error :(")
-    else:
-        if minecraft_path == []:
-            print("Please install minecraft")
-        else:
-            os.chdir(minecraft_path[2:-2])
-            print(os.getcwd())
-            if glob.glob('mods') != []:
-                mods_folder = os.path.abspath('mods')
-                print("Mods folder: ", mods_folder)
+def main():
+    cwd = os.getcwd()
+    print("Curent workspace: " ,cwd)
+    if os.path.isdir('mods'):
+        mods = glob.glob('mods/*.jar')
+        k = input("If you want to see mods enter 'y': ")
+        if k == 'y':
+            for mod in mods:
+                print(mod)
+            del k
+        mods_folder = os.path.abspath('mods')
+        print("Curent mods folder: ", mods_folder)
+        if os.path.exists(f"{os.environ['APPDATA']}/.minecraft"):
+            minecraft_path = f"{os.environ['APPDATA']}/.minecraft"
+            print("Minecraft folder: ", minecraft_path)
+            if os.path.exists(f"{minecraft_path}/mods"):
+                mods_target = os.path.abspath(f"{minecraft_path}/mods")
+                print("Minecraft mods folder: ", mods_target)
                 for mod in mods:
-                    mod_name = mod
-                    shutil.copy(mod_name, mods_folder)
-            else:
-                print("Install forge and launch minecraft please.")
+                    try:
+                        shutil.copy(mod, mods_target)
+                    except:
+                        print(f"I can't copy {mod}, sorry :(")
+                    else:
+                        print("Mod installed successfully")
 
-else:
-    os.mkdir('mods')
-    print("Пожалуйста добавьте моды в папку")
-a = input()
+            else:
+                print("Please install forge and run minecraft first.")
+        else:
+            print("Please install minecraft.")
+    else:
+        os.mkdir('mods')
+        print("Put mods in mods folder please.")
+    a = input()
+
+if __name__ == "__main__":
+    main()
